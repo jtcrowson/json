@@ -97,4 +97,79 @@ class JSONConvertibleTests: XCTestCase {
         }
     }
 
+    func testMakeJSONIncluding_ZeroElements() throws {
+        let person = Person(name: "John", age: 24)
+        let includingJSON = try person.makeJSONIncluding(keys: [])
+        let expectedJSON = JSON()
+        XCTAssertEqual(includingJSON, expectedJSON)
+    }
+    
+    func testMakeJSONIncluding_OneElement() throws {
+        let person = Person(name: "John", age: 24)
+        let includingJSON = try person.makeJSONIncluding(keys: ["name"])
+        let expectedJSON = try JSON(node: [
+            "name": "John"
+            ])
+        XCTAssertEqual(includingJSON, expectedJSON)
+    }
+    
+    func testMakeJSONIncluding_TwoElements() throws {
+        let person = Person(name: "John", age: 24)
+        let excludingJSON = try person.makeJSONIncluding(keys: ["name", "age"])
+        let expectedJSON = try JSON(node: [
+            "name": "John",
+            "age": 24
+            ])
+        XCTAssertEqual(excludingJSON, expectedJSON)
+    }
+    
+    func testMakeJSONIncluding_Sequence() throws {
+        let personOne = Person(name: "John", age: 24)
+        let personTwo = Person(name: "Louie", age: 25)
+        let persons = [personOne, personTwo]
+        let includingJSON = try persons.makeJSONIncluding(keys: ["age"])
+        let expectedJSON = try JSON(node: [
+            ["age": 24],
+            ["age": 25]
+            ])
+        XCTAssertEqual(includingJSON, expectedJSON)
+    }
+    
+    func testMakeJSONExcluding_ZeroElements() throws {
+        let person = Person(name: "John", age: 24)
+        let excludingJSON = try person.makeJSONExcluding(keys: [])
+        let expectedJSON = try JSON(node: [
+            "name": "John",
+            "age": 24
+            ])
+        XCTAssertEqual(excludingJSON, expectedJSON)
+    }
+    
+    func testMakeJSONExcluding_OneElement() throws {
+        let person = Person(name: "John", age: 24)
+        let excludingJSON = try person.makeJSONExcluding(keys: ["name"])
+        let expectedJSON = try JSON(node: [
+            "age": 24
+            ])
+        XCTAssertEqual(excludingJSON, expectedJSON)
+    }
+    
+    func testMakeJSONExcluding_TwoElements() throws {
+        let person = Person(name: "John", age: 24)
+        let excludingJSON = try person.makeJSONExcluding(keys: ["name", "age"])
+        let expectedJSON = try JSON()
+        XCTAssertEqual(excludingJSON, expectedJSON)
+    }
+    
+    func testMakeJSONExcluding_Sequence() throws {
+        let personOne = Person(name: "John", age: 24)
+        let personTwo = Person(name: "Louie", age: 25)
+        let persons = [personOne, personTwo]
+        let excludingJSON = try persons.makeJSONExcluding(keys: ["age"])
+        let expectedJSON = try JSON(node: [
+            ["name": "John"],
+            ["name": "Louie"]
+            ])
+        XCTAssertEqual(excludingJSON, expectedJSON)
+    }
 }
