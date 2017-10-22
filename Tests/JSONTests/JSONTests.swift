@@ -67,6 +67,26 @@ class JSONTests: XCTestCase {
         let expectation = "{\n  \"hello\" : \"world\"\n}"
         XCTAssertEqual(serialized, expectation)
     }
+    
+    func testSortedSerialize() throws {
+        guard #available(OSX 10.13, *) else {
+            print("Serialization with sorted keys is only available on OSX 10.13 and later.")
+            return
+        }
+        let json = JSON(node:
+            .object(
+                [
+                    "andrew": "smith",
+                    "zack": "riddle",
+                    "john": "crowson"
+                ]
+            )
+        )
+        
+        let serialized = try json.serialize(sortedKeys: true).makeString()
+        let expectation = "{\"andrew\":\"smith\",\"john\":\"crowson\",\"zack\":\"riddle\"}"
+        XCTAssertEqual(serialized, expectation)
+    }
 
     func testStringEscaping() throws {
         let json = JSON(node: .array(["he \r\n l \t l \n o w\"o\rrld "]))
